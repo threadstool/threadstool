@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Threads Downloader</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:640px;margin:40px auto;padding:0 16px;color:#111;}
+h1{text-align:center;}
+input,button{width:100%;padding:12px;font-size:1rem;margin-top:10px;border-radius:10px;}
+button{background:black;color:white;font-weight:600;cursor:pointer;border:0;}
+button:hover{background:#333;}
+video{width:100%;margin-top:10px;border-radius:10px;}
+footer{text-align:center;margin-top:30px;color:#6b7280;font-size:.9rem;}
+</style>
+</head>
+<body>
+<h1>Tải video Threads</h1>
+<input id="url" type="url" placeholder="Dán link bài Threads vào đây...">
+<button onclick="getVideo()">Lấy video</button>
+<div id="result"></div>
+<footer>© Threads Downloader - bản demo Render</footer>
+<script>
+async function getVideo(){
+  const url=document.getElementById('url').value.trim();
+  const result=document.getElementById('result');
+  if(!url)return alert("Vui lòng nhập URL Threads!");
+  result.innerHTML="⏳ Đang xử lý...";
+  try{
+    const api=`/api?url=${encodeURIComponent(url)}`;
+    const res=await fetch(api);
+    const data=await res.json();
+    if(!data||!data.medias||!data.medias[0])throw new Error("Không tìm thấy video!");
+    const videoUrl=data.medias[0].url;
+    result.innerHTML=`
+      <video controls src="${videoUrl}"></video>
+      <p><a href="${videoUrl}" download style="display:inline-block;padding:10px 14px;background:black;color:white;border-radius:8px;text-decoration:none;">⬇️ Tải video</a></p>
+    `;
+  }catch(e){
+    result.innerHTML=`<span style='color:red;'>❌ Lỗi: ${e.message}</span>`;
+  }
+}
+</script>
+</body>
+</html>
